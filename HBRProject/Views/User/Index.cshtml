@@ -1,0 +1,115 @@
+﻿@{ 
+    Layout = null;
+}
+
+<head>
+    <title>Login</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/animate.css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="~/Scripts/authInterceptor.js"></script>
+</head>
+<body class="white-bg">
+    <div>
+        <div class="middle-box text-center loginscreen animated fadeInDown">
+            <div>
+                <div>
+                    <img src="~/Content/Imgs/logo.png">
+                    <h2>Log in</h2>
+                    <br />
+                </div>
+                <center>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username" class="form-control" style="width:15%"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" class="form-control" style="width:15%"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Login" class="btn">
+                        </div>
+                    </form>
+                </center>
+                <div>
+                    Don't have an account? @Html.ActionLink("Sign up", "Registration", "User")
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+     <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            IsLogged()
+            ValidateForm()
+
+            $('#loginForm').submit(function (event) {
+                event.preventDefault()
+
+                if ($(this).valid()) {
+                    Login()
+                }
+            })
+        })
+
+        const Login = () => {
+
+            let userName = $('#username').val()
+            let password = $('#password').val()
+
+            let user = JSON.stringify({
+                'userName': userName,
+                'userPassword': password
+            })
+
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("Login", "User")",
+                data: user,
+                datatype: 'JSON',
+                success: function (response) {
+                    if (response.success) {
+                        localStorage.setItem('isLogged', 'true');
+                        localStorage.setItem('username', userName)
+                        location.href = "@Url.Action("Index", "Product")"; 
+                    }
+                    else swal("Incorrect username or password")
+                }
+            })
+        }
+
+        const ValidateForm = () => {
+            $('#loginForm').validate({
+                rules: {
+                    username: {
+                        required: true
+                    },
+                    password: {
+                        required: true
+                    }
+                },
+                messages: {
+                    username: {
+                        required: 'Please enter your username.'
+                    },
+                    password: {
+                        required: 'Please enter your password.',
+                        minlength: 'Your password must be at least 6 characters long.'
+                    }
+                }
+            })
+        }
+
+    </script>

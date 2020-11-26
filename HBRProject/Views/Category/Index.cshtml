@@ -1,0 +1,292 @@
+﻿@{
+    ViewBag.Title = "Categories";
+}
+
+<head>
+    <script src="~/Scripts/authInterceptor.js"></script>
+</head>
+
+@*El datatable*@
+
+<div>
+    <h2>Categories</h2>
+    <button type="button" id="btnCreate" class="btn btn-success">Create new</button>
+    <br /><br />
+    <table id="datatable" class="table table-bordered table-hover" style="width:100%;">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>Category name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@*Modal para crear nuevo.*@
+
+<div id="categoryFormCreate" class="modal fade" style="transform: translateY(13%);" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Create a category</h4>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+                    <div class="form-group">
+                        <label>Category Name</label>
+                        <input id="categoryCreate" name="categoryName" class="form-control" type="text" />
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="btnModalCreate" value="Create" class="btn btn-success" />
+                        <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Modal para editar/modificar.*@
+
+<div id="categoryFormUpdate" class="modal fade" style="transform: translateY(13%);" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Edit a category</h4>
+            </div>
+            <div class="modal-body">
+                <form id="updateForm">
+                    <div class="form-group">
+                        <label>Category Id</label>
+                        <input id="idUpdate" class="form-control" type="text" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label>Category Name</label>
+                        <input id="categoryUpdate" name="categoryName" class="form-control" type="text" />
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="btnUpdate" value="Edit" class="btn btn-info" />
+                        <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Modal para mostrar los detalles.*@
+
+<div id="categoryDetails" class="modal fade" style="transform: translateY(13%);" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Category details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <h5 id="labelName"></h5>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            IsNotLogged()
+
+            ValidateCreateForm()
+            $('#createForm').submit(function (event) {
+                event.preventDefault()
+
+                if ($(this).valid()) {
+                    CreateCategory()
+                }
+            })
+
+            ValidateUpdateForm()
+            $('#updateForm').submit(function (event) {
+                event.preventDefault()
+
+                if ($(this).valid()) {
+                    UpdateCategory()
+                }
+            })
+
+            let buttons = `
+            <button class='btn btn-info edit' id='btnEdit'>Edit</button>
+            &nbsp;
+            <button class='btn btn-warning details' id='btnDetails'>Details</button>
+            &nbsp;
+            <button class='btn btn-danger delete' id='btnDelete'> Delete</button>
+            `
+
+            let datatable = $('#datatable').DataTable({
+                "ajax": {
+                    "type": "GET",
+                    "url": "@Url.Action("GetAllCategories", "Category")",
+                    "datatype": "JSON",
+                },
+                "columns": [
+                    { "data": "categoryId", "visible": false },
+                    { "data": "categoryName" },
+                    { "defaultContent": buttons }
+                ]
+            })
+
+            DatatableCreateOnClick()
+
+            DatatableEditOnClick(datatable)
+
+            DatatableDetailsOnClick(datatable)
+
+            DatatableDeleteOnClick(datatable)
+
+        })
+
+        const DatatableCreateOnClick = () => {
+            $('#btnCreate').click(function () {
+                $('#categoryFormCreate').modal()
+            })
+        }
+
+        const DatatableEditOnClick = (datatable) => {
+            datatable.on('click', '.edit', function () {
+                let row = datatable.row($(this).parents('tr'))
+
+                let categoryId = row.data()['categoryId']
+                let categoryName = row.data()['categoryName']
+
+                $(".modal-body #idUpdate").val(categoryId)
+                $(".modal-body #categoryUpdate").val(categoryName)
+                $("#categoryFormUpdate").modal()
+            })
+        }
+
+        const DatatableDetailsOnClick = (datatable) => {
+            datatable.on('click', '.details', function () {
+                let row = datatable.row($(this).parents('tr'))
+
+                let categoryId = row.data()['categoryId']
+                let categoryName = row.data()['categoryName']
+
+                $(".modal-body #labelId").text(`Category id: ${categoryId}`)
+                $(".modal-body #labelName").text(`Category name: ${categoryName}`)
+                $("#categoryDetails").modal()
+            })
+        }
+
+        const DatatableDeleteOnClick = (datatable) => {
+            datatable.on('click', '.delete', function () {
+                let row = datatable.row($(this).parents('tr'))
+
+                let id = row.data()['categoryId']
+
+                DeleteCategory(id)
+                row.remove()
+                datatable.draw()
+            })
+        }
+
+        const CreateCategory = () => {
+
+            let categoryName = $('#categoryFormCreate #categoryCreate').val()
+
+            let category = JSON.stringify({ 'categoryName': categoryName })
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("CreateCategory", "Category")",
+                data: category,
+                success: function (response) {
+                    if (response.success) location.reload();
+                    else swal(response.errorMessage)
+                }
+            })
+        }
+
+        const UpdateCategory = () => {
+
+            let categoryId = $('#categoryFormUpdate #idUpdate').val()
+            let categoryName = $('#categoryFormUpdate #categoryUpdate').val()
+
+            let category = JSON.stringify({ 'categoryId': categoryId, 'categoryName': categoryName })
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("UpdateCategory", "Category")",
+                data: category,
+                success: function (response) {
+                    if (response.success) location.reload()
+                    else swal(response.errorMessage)
+                }
+            })
+        }
+
+        const DeleteCategory = (categoryId) => {
+
+            let category = JSON.stringify({ 'categoryId': categoryId })
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("DeleteCategory", "Category")",
+                data: category,
+                success: function (response) {
+                    if (!response.success) swal(response.errorMessage)
+                }
+            })
+        }
+
+        const ValidateCreateForm = () => {
+            $('#createForm').validate({
+                rules: {
+                    categoryName: {
+                        required: true
+                    }
+                },
+                messages: {
+                    categoryName: {
+                        required: 'Please provide a product name.'
+                    }
+                }
+            })
+        }
+
+        const ValidateUpdateForm = () => {
+            $('#updateForm').validate({
+                rules: {
+                    categoryName: {
+                        required: true
+                    }
+                },
+                messages: {
+                    categoryName: {
+                        required: 'Please provide a product name.'
+                    }
+                }
+            })
+        }
+
+    </script>
+
+}
+

@@ -1,0 +1,12 @@
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\Database.dll.config
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\Database.dll
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\Database.pdb
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\EntityFramework.dll
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\EntityFramework.xml
+C:\Users\Stiff\Desktop\C# Projects\Database\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Stiff\Desktop\C# Projects\Database\obj\Debug\Database.csprojAssemblyReference.cache
+C:\Users\Stiff\Desktop\C# Projects\Database\obj\Debug\Database.csproj.CoreCompileInputs.cache
+C:\Users\Stiff\Desktop\C# Projects\Database\obj\Debug\Database.csproj.CopyComplete
+C:\Users\Stiff\Desktop\C# Projects\Database\obj\Debug\Database.dll
+C:\Users\Stiff\Desktop\C# Projects\Database\obj\Debug\Database.pdb

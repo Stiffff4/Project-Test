@@ -1,0 +1,166 @@
+﻿@{
+    Layout = null;
+}
+
+<head>
+    <title>Registration</title>
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Content/animate.css" rel="stylesheet">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="~/Scripts/authInterceptor.js"></script>
+</head>
+<body class="white-bg">
+    <div>
+        <div class="middle-box text-center loginscreen animated fadeInDown">
+            <div>
+                <div>
+                    <img src="~/Content/Imgs/logo.png">
+                    <h2>Register</h2>
+                    <br />
+                </div>
+                <div>
+                    <center>
+                        <form id="registrationForm">
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" id="username" name="username" class="form-control" style="width:15%" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="firstname">First Name:</label>
+                                <input type="text" id="firstname" name="firstname" class="form-control" style="width:15%" />
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Last Name:</label>
+                                <input type="text" id="lastname" name="lastname" class="form-control" style="width:15%" />
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" name="email" class="form-control" style="width:15%" />
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" id="password" name="password" class="form-control" style="width:15%" />
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm password:</label>
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" style="width:15%" />
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Sign up" id="btnSignup" class="btn full-width m-b">
+                            </div>
+                        </form>
+                    </center>
+                </div>
+                <div>
+                    Already have an account? @Html.ActionLink("Log in", "Index", "User")
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+            integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            IsLogged()
+            ValidateForm()
+
+            $('#registrationForm').submit(function (event) {
+                event.preventDefault()
+
+                if ($(this).valid()) {
+                    CreateUser()
+                }
+            })
+        })
+
+        const CreateUser = () => {
+
+            let userName = $('#username').val()
+            let firstName = $('#firstname').val()
+            let lastName = $('#lastname').val()
+            let email = $('#email').val()
+            let password = $('#password').val()
+
+            let user = JSON.stringify({
+                'userName': userName,
+                'userFirstName': firstName,
+                'userlastName': lastName,
+                'userEmail': email,
+                'userPassword': password,
+            })
+            console.log('a')
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("CreateUser", "User")",
+                data: user,
+                datatype: 'JSON',
+                success: response => {
+                    if (response.success) location.href = "@Url.Action("Index", "User")"
+                    else swal(response.errorMessage)
+                }
+            })
+        }
+
+        const ValidateForm = () => {
+            $('#registrationForm').validate({
+                rules: {
+                    username: {
+                        required: true,
+                        minlength: 2
+                    },
+                    firstname: {
+                        required: true,
+                    },
+                    lastname: {
+                        required: true,
+                    },
+                    email: {
+                        required: true
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6
+                    },
+                    confirmPassword: {
+                        required: true,
+                        equalTo: '#password'
+                    }
+                },
+                messages: {
+                    username: {
+                        required: 'Please provide an username.',
+                        minlength: 'Your username must consist of at least 2 characters.'
+                    },
+                    firstname: {
+                        required: 'Please provide your first name.'
+                    },
+                    lastname: {
+                        required: 'Please provide your last name. '
+                    },
+                    email: {
+                        required: 'Please provide an email.'
+                    },
+                    password: {
+                        required: 'Please provide a password.',
+                        minlength: 'Your password must be at least 6 characters long.'
+                    },
+                    confirmPassword: {
+                        required: 'Please confirm your password.',
+                        equalTo: 'Passwords do not match.'
+                    }
+                }
+            })
+        }
+    </script>

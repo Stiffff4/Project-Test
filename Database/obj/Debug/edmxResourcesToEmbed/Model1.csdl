@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="HbrDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Categories">
+    <Key>
+      <PropertyRef Name="CategoryID" />
+    </Key>
+    <Property Name="CategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CategoryName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Products" Relationship="Self.FK__Products__Catego__239E4DCF" FromRole="Categories" ToRole="Products" />
+  </EntityType>
+  <EntityType Name="Products">
+    <Key>
+      <PropertyRef Name="ProductId" />
+    </Key>
+    <Property Name="ProductId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ProductName" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="ProductDescription" Type="String" MaxLength="50" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="ProductCost" Type="Int32" Nullable="false" />
+    <Property Name="CategoryId" Type="Int32" Nullable="false" />
+    <Property Name="CategoryName" Type="String" MaxLength="25" FixedLength="true" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Categories" Relationship="Self.FK__Products__Catego__239E4DCF" FromRole="Products" ToRole="Categories" />
+  </EntityType>
+  <EntityType Name="USERS">
+    <Key>
+      <PropertyRef Name="UserID" />
+    </Key>
+    <Property Name="UserID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="UserLastName" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="UserEmail" Type="String" MaxLength="30" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="UserPassword" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+  </EntityType>
+  <Association Name="FK__Products__Catego__239E4DCF">
+    <End Role="Categories" Type="Self.Categories" Multiplicity="1" />
+    <End Role="Products" Type="Self.Products" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Categories">
+        <PropertyRef Name="CategoryID" />
+      </Principal>
+      <Dependent Role="Products">
+        <PropertyRef Name="CategoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="HbrDBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Categories" EntityType="Self.Categories" />
+    <EntitySet Name="Products" EntityType="Self.Products" />
+    <EntitySet Name="USERS" EntityType="Self.USERS" />
+    <AssociationSet Name="FK__Products__Catego__239E4DCF" Association="Self.FK__Products__Catego__239E4DCF">
+      <End Role="Categories" EntitySet="Categories" />
+      <End Role="Products" EntitySet="Products" />
+    </AssociationSet>
+    <FunctionImport Name="CreateCategory">
+      <Parameter Name="CategoryName" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="CreateProduct">
+      <Parameter Name="ProductName" Mode="In" Type="String" />
+      <Parameter Name="ProductDescription" Mode="In" Type="String" />
+      <Parameter Name="ProductCost" Mode="In" Type="Int32" />
+      <Parameter Name="CategoryId" Mode="In" Type="Int32" />
+      <Parameter Name="CategoryName" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="DeleteCategory">
+      <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="DeleteProduct">
+      <Parameter Name="ProductID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EditCategory">
+      <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+      <Parameter Name="CategoryName" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="EditProduct">
+      <Parameter Name="ProductID" Mode="In" Type="Int32" />
+      <Parameter Name="ProductName" Mode="In" Type="String" />
+      <Parameter Name="ProductDescription" Mode="In" Type="String" />
+      <Parameter Name="ProductCost" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="EditUser">
+      <Parameter Name="UserName" Mode="In" Type="String" />
+      <Parameter Name="UserLastName" Mode="In" Type="String" />
+      <Parameter Name="UserEmail" Mode="In" Type="String" />
+      <Parameter Name="UserPassword" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="GetAllCategories" ReturnType="Collection(HbrDBModel.GetAllCategories_Result)" />
+    <FunctionImport Name="GetAllProducts" ReturnType="Collection(HbrDBModel.GetAllProducts_Result)" />
+    <FunctionImport Name="GetCategoryById" ReturnType="Collection(HbrDBModel.GetCategoryById_Result)">
+      <Parameter Name="CategoryID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetProductById" ReturnType="Collection(HbrDBModel.GetProductById_Result)">
+      <Parameter Name="ProductID" Mode="In" Type="Int32" />
+    </FunctionImport>
+  </EntityContainer>
+  <ComplexType Name="GetAllCategories_Result">
+    <Property Type="Int32" Name="CategoryID" Nullable="false" />
+    <Property Type="String" Name="CategoryName" Nullable="false" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="GetAllProducts_Result">
+    <Property Type="Int32" Name="ProductId" Nullable="false" />
+    <Property Type="String" Name="ProductName" Nullable="false" MaxLength="20" />
+    <Property Type="String" Name="ProductDescription" Nullable="false" MaxLength="50" />
+    <Property Type="Int32" Name="ProductCost" Nullable="false" />
+    <Property Type="Int32" Name="CategoryId" Nullable="false" />
+    <Property Type="String" Name="CategoryName" Nullable="false" MaxLength="25" />
+  </ComplexType>
+  <ComplexType Name="GetCategoryById_Result">
+    <Property Type="Int32" Name="CategoryID" Nullable="false" />
+    <Property Type="String" Name="CategoryName" Nullable="false" MaxLength="50" />
+  </ComplexType>
+  <ComplexType Name="GetProductById_Result">
+    <Property Type="Int32" Name="ProductId" Nullable="false" />
+    <Property Type="String" Name="ProductName" Nullable="false" MaxLength="20" />
+    <Property Type="String" Name="ProductDescription" Nullable="false" MaxLength="50" />
+    <Property Type="Int32" Name="ProductCost" Nullable="false" />
+    <Property Type="Int32" Name="CategoryId" Nullable="false" />
+    <Property Type="String" Name="CategoryName" Nullable="false" MaxLength="25" />
+  </ComplexType>
+</Schema>

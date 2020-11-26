@@ -1,0 +1,422 @@
+﻿@{
+    ViewBag.Title = "Products";
+}
+
+<head>
+    <script src="~/Scripts/authInterceptor.js"></script>
+</head>
+
+@*El datatable*@
+
+<div>
+    <h2>Products</h2>
+    <button type="button" id="btnCreate" class="btn btn-success">Create new</button>
+    <br /><br />
+    <table id="datatable" class="table table-bordered table-hover" style="width:100%;">
+        <thead>
+            <tr>
+                <th>Product Id</th>
+                <th>Product name</th>
+                <th>Product description</th>
+                <th>Product cost</th>
+                <th>Category Id</th>
+                <th>Category name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@*Modal para crear nuevo.*@
+
+<div id="productFormCreate" class="modal fade" style="transform: translateY(13%);" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Create a product</h4>
+            </div>
+            <div class="modal-body">
+                <form id="createForm">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input id="productNameCreate" name="productName" class="form-control" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>Product Description</label>
+                        <input id="productDescriptionCreate" name="productDescription" class="form-control" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>Product Cost</label>
+                        <input id="productCostCreate" name="productCost" class="form-control" type="text" />
+                    </div>
+                    <div class="form-group" hidden>
+                        <label>Category ID</label>
+                        <input id="categoryIdCreate" class="form-control" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>Category Name</label>
+                        <select id="categories">
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="btnCreate" value="Create" class="btn btn-success" />
+                        <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Modal para editar/modificar.*@
+
+<div id="productFormUpdate" class="modal fade" style="transform: translateY(13%);" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Edit a product</h4>
+            </div>
+            <div class="modal-body">
+                <form id="updateForm">
+                    <div class="form-group">
+                        <label>Product Id</label>
+                        <input id="productIdUpdate" class="form-control" type="text" readonly />
+                    </div>
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input id="productNameUpdate" name="productName" class="form-control" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>Product Description</label>
+                        <input id="productDescriptionUpdate" name="productDescription" class="form-control" type="text" />
+                    </div>
+                    <div class="form-group">
+                        <label>Product Cost</label>
+                        <input id="productCostUpdate" name="productCost" class="form-control" type="text" />
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="btnUpdate" value="Edit" class="btn btn-info" />
+                        <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@*Modal para mostrar los detalles.*@
+
+<div id="productDetails" class="modal fade" style="transform: translateY(13%);" role="dialog" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Product details</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <h5 id="labelId"></h5>
+                </div>
+                <div class="form-group">
+                    <h5 id="labelName"></h5>
+                </div>
+                <div class="form-group">
+                    <h5 id="labelDescription"></h5>
+                </div>
+                <div class="form-group">
+                    <h5 id="labelCost"></h5>
+                </div>
+                <div class="form-group">
+                    <h5 id="labelCategoryId"></h5>
+                </div>
+                <div class="form-group">
+                    <h5 id="labelCategoryName"></h5>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-success" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" />
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            IsNotLogged()
+
+            ValidateCreateForm()
+            $('#createForm').submit(function (event) {
+                event.preventDefault()
+
+                if ($(this).valid()) {
+                    CreateProduct()
+                }
+            })
+
+            ValidateUpdateForm()
+            $('#updateForm').submit(function (event) {
+                event.preventDefault()
+
+                if ($(this).valid()) {
+                    UpdateProduct()
+                }
+            })
+
+            let buttons =
+            `
+            <button class='btn btn-info edit' id='btnEdit'>Edit</button>
+            &nbsp;
+            <button class='btn btn-warning details' id='btnDetails'>Details</button>
+            &nbsp;
+            <button class='btn btn-danger delete' id='btnDelete'>Delete</button>
+            `
+
+            let datatable = $('#datatable').DataTable({
+                "ajax": {
+                    "type": "GET",
+                    "url": "@Url.Action("GetAllProducts", "Product")",
+                    "datatype": "JSON",
+                },
+                "columns": [
+                    { "data": "productId", "visible": false },
+                    { "data": "productName" },
+                    { "data": "productDescription" },
+                    { "data": "productCost" },
+                    { "data": "categoryId", "visible": false },
+                    { "data": "categoryName" },
+                    { "defaultContent": buttons }
+                ]
+            })
+
+            DatatableCreateOnClick()
+
+            DatatableEditOnClick(datatable)
+
+            DatatableDetailsOnClick(datatable)
+
+            DatatableDeleteOnClick(datatable)
+
+            FillDropdown()
+
+        })
+
+        const DatatableCreateOnClick = () => {
+            $('#btnCreate').click(function () {
+                $("#productFormCreate").modal()
+            })
+        }
+
+        const DatatableEditOnClick = (datatable) => {
+            datatable.on('click', '.edit', function () {
+                let row = datatable.row($(this).parents('tr'))
+
+                let productId = row.data()['productId']
+                let productName = row.data()['productName']
+                let productDescription = row.data()['productDescription']
+                let productCost = row.data()['productCost']
+                let categoryId = row.data()['categoryId']
+                let categoryName = row.data()['categoryName']
+
+                $(".modal-body #productIdUpdate").val(productId)
+                $(".modal-body #productNameUpdate").val(productName)
+                $(".modal-body #productDescriptionUpdate").val(productDescription)
+                $(".modal-body #productCostUpdate").val(productCost)
+                $(".modal-body #categoryIdUpdate").val(categoryId)
+                $(".modal-body #categoryNameUpdate").val(categoryName)
+
+                $("#productFormUpdate").modal()
+            })
+        }
+
+        const DatatableDetailsOnClick = (datatable) => {
+            datatable.on('click', '.details', function () {
+                let row = datatable.row($(this).parents('tr'))
+
+                let productName = row.data()['productName']
+                let productDescription = row.data()['productDescription']
+                let productCost = row.data()['productCost']
+                let categoryName = row.data()['categoryName']
+
+                $(".modal-body #labelName").text(`Product name: ${productName}`)
+                $(".modal-body #labelDescription").text(`Product Description: ${productDescription}`)
+                $(".modal-body #labelCost").text(`Product Cost: ${productCost}`)
+                $(".modal-body #labelCategoryName").text(`Category name: ${categoryName}`)
+
+                $("#productDetails").modal()
+            })
+        }
+
+        const DatatableDeleteOnClick = (datatable) => {
+            datatable.on('click', '.delete', function () {
+                let row = datatable.row($(this).parents('tr'))
+
+                let id = row.data()['productId']
+
+                DeleteProduct(id)
+                row.remove()
+                datatable.draw()
+            })
+        }
+
+        const FillDropdown = () => {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("GetAllCategories", "Category")",
+                datatype: 'JSON',
+                success: function (response) {
+                    if (response.success) {
+                        let responseData = response.data
+                        let responseLength = responseData.length
+
+                        for (let i = 0; i < responseLength; i++) {
+                            let categoryId = responseData[i].categoryId
+                            let categoryName = responseData[i].categoryName
+
+                            $("#categories").append(`<option id="${categoryId}" value="${categoryId}">${categoryName}</option>`)
+                        }
+                    }
+                    else swal(response.errorMessage)
+                }
+            })
+        }
+
+        const CreateProduct = () => {
+            let productName = $('#productFormCreate #productNameCreate').val()
+            let productDescription = $('#productFormCreate #productDescriptionCreate').val()
+            let productCost = $('#productFormCreate #productCostCreate').val()
+            let categoryId = $('#categories').find(":selected").val();
+            let categoryName = $('#categories').find(":selected").text();
+
+            let product = JSON.stringify({
+                'productName': productName,
+                'productDescription': productDescription,
+                'productCost': productCost,
+                'categoryId': categoryId,
+                'categoryName': categoryName
+            })
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("CreateProduct", "Product")",
+                data: product,
+                success: function (response) {
+                    if (response.success) location.reload()
+                    else swal(response.errorMessage)
+                }
+            })
+
+        }
+
+        const UpdateProduct = () => {
+
+            let productId = $('#productFormUpdate #productIdUpdate').val()
+            let productName = $('#productFormUpdate #productNameUpdate').val()
+            let productDescription = $('#productFormUpdate #productDescriptionUpdate').val()
+            let productCost = $('#productFormUpdate #productCostUpdate').val()
+
+            let product = JSON.stringify({
+                'productId': productId,
+                'productName': productName,
+                'productDescription': productDescription,
+                'productCost': productCost,
+            })
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("UpdateProduct", "Product")",
+                data: product,
+                success: function (response) {
+                    if (response.success) location.reload()
+                    else swal(response.errorMessage)
+                }
+            })
+        }
+
+        const DeleteProduct = (productId) => {
+
+            let product = JSON.stringify({ 'productId': productId })
+
+            $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                type: 'POST',
+                url: "@Url.Action("DeleteProduct", "Product")",
+                data: product,
+                success: function (response) {
+                    if (!response.success) swal(response.errorMessage)
+                }
+            })
+        }
+
+        const ValidateCreateForm = () => {
+            $('#createForm').validate({
+                rules: {
+                    productName: {
+                        required: true
+                    },
+                    productDescription: {
+                        required: true
+                    },
+                    productCost: {
+                        required: true,
+                        digits: true
+                    }
+                },
+                messages: {
+                    productName: {
+                        required: 'Please provide a product name.'
+                    },
+                    productDescription: {
+                        required: 'Please provide a product description.'
+                    },
+                    productCost: {
+                        required: 'Please provide a product cost. ',
+                        digits: 'The product cost must only be digits.' 
+                    }
+                }
+            })
+        }
+
+        const ValidateUpdateForm = () => {
+            $('#updateForm').validate({
+                rules: {
+                    productName: {
+                        required: true
+                    },
+                    productDescription: {
+                        required: true
+                    },
+                    productCost: {
+                        required: true,
+                        digits: true
+                    }
+                },
+                messages: {
+                    productName: {
+                        required: 'Please provide a product name.'
+                    },
+                    productDescription: {
+                        required: 'Please provide a product description.'
+                    },
+                    productCost: {
+                        required: 'Please provide a product cost. ',
+                        digits: 'The product cost must only be digits.'
+                    }
+                }
+            })
+        }
+
+    </script>
+}

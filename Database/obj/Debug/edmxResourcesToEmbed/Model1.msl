@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="HbrDBModelStoreContainer" CdmEntityContainer="HbrDBEntities">
+    <EntitySetMapping Name="Categories">
+      <EntityTypeMapping TypeName="HbrDBModel.Categories">
+        <MappingFragment StoreEntitySet="Categories">
+          <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Products">
+      <EntityTypeMapping TypeName="HbrDBModel.Products">
+        <MappingFragment StoreEntitySet="Products">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+          <ScalarProperty Name="ProductCost" ColumnName="ProductCost" />
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="USERS">
+      <EntityTypeMapping TypeName="HbrDBModel.USERS">
+        <MappingFragment StoreEntitySet="USERS">
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="UserLastName" ColumnName="UserLastName" />
+          <ScalarProperty Name="UserEmail" ColumnName="UserEmail" />
+          <ScalarProperty Name="UserPassword" ColumnName="UserPassword" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <FunctionImportMapping FunctionImportName="CreateCategory" FunctionName="HbrDBModel.Store.CreateCategory" />
+    <FunctionImportMapping FunctionImportName="CreateProduct" FunctionName="HbrDBModel.Store.CreateProduct" />
+    <FunctionImportMapping FunctionImportName="DeleteCategory" FunctionName="HbrDBModel.Store.DeleteCategory" />
+    <FunctionImportMapping FunctionImportName="DeleteProduct" FunctionName="HbrDBModel.Store.DeleteProduct" />
+    <FunctionImportMapping FunctionImportName="EditCategory" FunctionName="HbrDBModel.Store.EditCategory" />
+    <FunctionImportMapping FunctionImportName="EditProduct" FunctionName="HbrDBModel.Store.EditProduct" />
+    <FunctionImportMapping FunctionImportName="EditUser" FunctionName="HbrDBModel.Store.EditUser" />
+    <FunctionImportMapping FunctionImportName="GetAllCategories" FunctionName="HbrDBModel.Store.GetAllCategories">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="HbrDBModel.GetAllCategories_Result">
+          <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="GetAllProducts" FunctionName="HbrDBModel.Store.GetAllProducts">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="HbrDBModel.GetAllProducts_Result">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+          <ScalarProperty Name="ProductCost" ColumnName="ProductCost" />
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="GetCategoryById" FunctionName="HbrDBModel.Store.GetCategoryById">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="HbrDBModel.GetCategoryById_Result">
+          <ScalarProperty Name="CategoryID" ColumnName="CategoryID" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+    <FunctionImportMapping FunctionImportName="GetProductById" FunctionName="HbrDBModel.Store.GetProductById">
+      <ResultMapping>
+        <ComplexTypeMapping TypeName="HbrDBModel.GetProductById_Result">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+          <ScalarProperty Name="ProductDescription" ColumnName="ProductDescription" />
+          <ScalarProperty Name="ProductCost" ColumnName="ProductCost" />
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+        </ComplexTypeMapping>
+      </ResultMapping>
+    </FunctionImportMapping>
+  </EntityContainerMapping>
+</Mapping>
