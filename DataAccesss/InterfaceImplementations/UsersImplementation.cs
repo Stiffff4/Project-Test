@@ -141,20 +141,5 @@ namespace DataAccesss.InterfaceImplementations
                 sqlConnection.Close();
             }
         }
-        public void Delete(Users user)
-        {
-            using (SqlConnection sqlConnection = new SqlConnection(db.Database.Connection.ConnectionString))
-            {
-                sqlConnection.Open();
-
-                SqlCommand sqlCommand = new SqlCommand("DeleteUser", sqlConnection);
-                sqlCommand.CommandType = CommandType.StoredProcedure;
-                sqlCommand.Parameters.Clear();
-                sqlCommand.Parameters.AddWithValue("@UserID", user.userId);
-                sqlCommand.ExecuteNonQuery();
-
-                sqlConnection.Close();
-            }
-        }
     }
 }

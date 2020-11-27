@@ -87,20 +87,6 @@ namespace HBRProject.Controllers
             }
         }
 
-        [HttpPost]
-        public JsonResult DeleteUser(Users user)
-        {
-            try
-            {
-                iUsers.Delete(user);
-                return True();
-            }
-            catch(Exception e)
-            {
-                return Error(e, false);
-            }
-        }
-
         public JsonResult True()
         {
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);

@@ -8,9 +8,7 @@ namespace DataAccesss.Interfaces
     {
         public void Create(Users user);
         public bool IsUserValid(Users user);
-
         public List<Users> GetUserList(string username);
         public void Update(Users user);
-        public void Delete(Users user);
     }
 }

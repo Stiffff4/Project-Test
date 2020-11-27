@@ -1,0 +1,22 @@
+CREATE TABLE Categories (
+	CategoryID INT PRIMARY KEY IDENTITY(1,1),
+	CategoryName VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE Products (
+	ProductId INT PRIMARY KEY IDENTITY(1,1),
+	ProductName VARCHAR(20) NOT NULL,
+	ProductDescription VARCHAR(50) NOT NULL,
+	ProductCost INT NOT NULL,
+	CategoryId INT REFERENCES Categories(CategoryID) NOT NULL,
+	CategoryName VARCHAR(50) NOT NULL
+)
+
+CREATE TABLE Users (
+	UserId INT PRIMARY KEY IDENTITY(1,1),
+	UserName VARCHAR(20) NOT NULL,
+	UserFirstName VARCHAR(30) NOT NULL,
+	UserLastName VARCHAR(30) NOT NULL,
+	UserEmail VARCHAR(40) NOT NULL,
+	UserPassword VARCHAR(200) NOT NULL,
+)
